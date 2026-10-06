@@ -1,0 +1,6 @@
+# Adafruit Feather nRF52840 Express（ZMK 用の定義）
+# SPDX-License-Identifier: MIT
+
+config BOARD_FEATHER_NRF52840_ZMK
+    bool "Adafruit Feather nRF52840 Express (ZMK)"
+    depends on SOC_NRF52840_QIAA

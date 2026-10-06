@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: MIT
+
+if BOARD_FEATHER_NRF52840_ZMK
+
+config BOARD
+    default "feather_nrf52840_zmk"
+
+if USB_DEVICE_STACK
+
+config USB_NRFX
+    default y
+
+endif # USB_DEVICE_STACK
+
+config BT_CTLR
+    default BT
+
+endif # BOARD_FEATHER_NRF52840_ZMK

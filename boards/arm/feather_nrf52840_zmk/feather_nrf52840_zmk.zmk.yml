@@ -1,0 +1,9 @@
+file_format: "1"
+id: feather_nrf52840_zmk
+name: Adafruit Feather nRF52840 Express
+type: board
+arch: arm
+outputs:
+  - usb
+  - ble
+url: https://www.adafruit.com/product/4062

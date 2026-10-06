@@ -1,0 +1,5 @@
+# GitHub Actions でビルドする組み合わせ（ボード＋シールド）
+---
+include:
+  - board: feather_nrf52840_zmk
+    shield: trackball_test

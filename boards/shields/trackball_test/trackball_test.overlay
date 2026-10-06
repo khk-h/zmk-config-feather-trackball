@@ -1,0 +1,91 @@
+/*
+ * 机上試験用：Feather nRF52840 Express ＋ タクトスイッチ4個（2行×2列）＋ PMW3610 基板（zzz-kbd）
+ * 配線は trackball-keyboard リポジトリの CLAUDE.md の配線表と firmware/test/arduino の key_check と同じ
+ */
+
+#include <dt-bindings/zmk/matrix_transform.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <input/processors.dtsi>
+#include "trackball_test-layouts.dtsi"
+
+/ {
+    chosen {
+        zmk,kscan = &kscan0;
+        zmk,physical-layout = &trackball_test_physical_layout;
+    };
+
+    // キー：ダイオードなしの 2×2 マトリクス。列に電圧を出し、行で読む
+    kscan0: kscan0 {
+        compatible = "zmk,kscan-gpio-matrix";
+        diode-direction = "col2row";
+        wakeup-source;
+
+        col-gpios
+            = <&gpio0 6 GPIO_ACTIVE_HIGH>    // 列0：D11 = P0.06
+            , <&gpio0 8 GPIO_ACTIVE_HIGH>    // 列1：D12 = P0.08
+            ;
+
+        row-gpios
+            = <&gpio1 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // 行0：D5 = P1.08
+            , <&gpio0 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // 行1：D6 = P0.07
+            ;
+    };
+
+    default_transform: keymap_transform0 {
+        compatible = "zmk,matrix-transform";
+        columns = <2>;
+        rows = <2>;
+        map = <
+        //   SW1     SW2
+            RC(0,0) RC(0,1)
+        //   SW3     SW4
+            RC(1,0) RC(1,1)
+        >;
+    };
+
+    trackball_listener {
+        compatible = "zmk,input-listener";
+        device = <&trackball>;
+    };
+};
+
+// PMW3610：3線式 SPI（SDIO 1本で送受信するので、MOSI と MISO に同じピンを割り当てる）
+&pinctrl {
+    spi0_default: spi0_default {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 14)>,    // SCLK：SCK = P0.14
+                    <NRF_PSEL(SPIM_MOSI, 0, 13)>,   // SDIO：MO = P0.13
+                    <NRF_PSEL(SPIM_MISO, 0, 13)>;   // SDIO：MO = P0.13
+        };
+    };
+
+    spi0_sleep: spi0_sleep {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 14)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 13)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 13)>;
+            low-power-enable;
+        };
+    };
+};
+
+&spi0 {
+    status = "okay";
+    compatible = "nordic,nrf-spim";
+    pinctrl-0 = <&spi0_default>;
+    pinctrl-1 = <&spi0_sleep>;
+    pinctrl-names = "default", "sleep";
+    cs-gpios = <&gpio0 27 GPIO_ACTIVE_LOW>;    // nCS：D10 = P0.27
+
+    trackball: trackball@0 {
+        status = "okay";
+        compatible = "pixart,pmw3610";
+        reg = <0>;
+        spi-max-frequency = <2000000>;
+        irq-gpios = <&gpio0 26 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;   // MOTION：D9 = P0.26
+        cpi = <600>;
+        evt-type = <INPUT_EV_REL>;
+        x-input-code = <INPUT_REL_X>;
+        y-input-code = <INPUT_REL_Y>;
+    };
+};

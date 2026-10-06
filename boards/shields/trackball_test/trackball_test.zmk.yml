@@ -1,0 +1,8 @@
+file_format: "1"
+id: trackball_test
+name: Trackball Test
+type: shield
+url: https://github.com/khk-h/zmk-config-feather-trackball
+features:
+  - keys
+  - pointer

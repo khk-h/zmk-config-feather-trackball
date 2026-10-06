@@ -1,0 +1,82 @@
+/*
+ * Adafruit Feather nRF52840 Express（ZMK 用の定義）
+ * ZMK v0.3.0 の nice!nano の定義を元にした。Zephyr 本体の Feather の定義は書き込み先の番地が
+ * Feather に入っている UF2 ブートローダ（SoftDevice s140 6.1.1）と合わないので使わない。
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+/dts-v1/;
+#include <nordic/nrf52840_qiaa.dtsi>
+
+/ {
+    model = "Adafruit Feather nRF52840 Express (ZMK)";
+    compatible = "adafruit,feather-nrf52840";
+
+    chosen {
+        zephyr,code-partition = &code_partition;
+        zephyr,sram = &sram0;
+        zephyr,flash = &flash0;
+        zmk,battery = &vbatt;
+    };
+
+    leds {
+        compatible = "gpio-leds";
+        red_led: led_0 {
+            gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;   // D3、赤 LED
+        };
+        blue_led: led_1 {
+            gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;   // 青 LED
+        };
+    };
+
+    // 電池電圧：基板上の分圧回路（100kΩ＋100kΩ）を P0.29（AIN5）で測る
+    vbatt: vbatt {
+        compatible = "zmk,battery-voltage-divider";
+        io-channels = <&adc 5>;
+        output-ohms = <100000>;
+        full-ohms = <(100000 + 100000)>;
+    };
+};
+
+&adc {
+    status = "okay";
+};
+
+&gpiote {
+    status = "okay";
+};
+
+&gpio0 {
+    status = "okay";
+};
+
+&gpio1 {
+    status = "okay";
+};
+
+zephyr_udc0: &usbd {
+    status = "okay";
+};
+
+&flash0 {
+    // Adafruit の UF2 ブートローダ（SoftDevice s140 6.1.1）の配置。nice!nano と同じ
+    partitions {
+        compatible = "fixed-partitions";
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        sd_partition: partition@0 {
+            reg = <0x00000000 0x00026000>;
+        };
+        code_partition: partition@26000 {
+            reg = <0x00026000 0x000c6000>;
+        };
+        storage_partition: partition@ec000 {
+            reg = <0x000ec000 0x00008000>;
+        };
+        boot_partition: partition@f4000 {
+            reg = <0x000f4000 0x0000c000>;
+        };
+    };
+};
