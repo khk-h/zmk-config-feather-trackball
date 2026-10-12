@@ -1,0 +1,20 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/pointing.h>
+
+/ {
+    keymap {
+        compatible = "zmk,keymap";
+
+        default_layer {
+            //   左SW1   左SW2   |  右SW1：左クリック  右SW2：右クリック
+            //   左SW3   左SW4   |  右SW3：A           右SW4：Bluetooth のペアリング情報を消す
+            // 左は B・C・D・E にして、どちらの手から入力が来たか分かるようにする
+            bindings = <
+                &kp B   &kp C       &mkp LCLK   &mkp RCLK
+                &kp D   &kp E       &kp A       &bt BT_CLR
+            >;
+        };
+    };
+};

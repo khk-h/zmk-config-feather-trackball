@@ -1,0 +1,44 @@
+/*
+ * 分割の机上試験：Feather nRF52840 Express ×2、左右とも タクトスイッチ4個（2行×2列）
+ * 右だけ PMW3610 基板（zzz-kbd）を付ける。キーの配線は左右とも 1台用の trackball_test と同じピン
+ */
+
+#include <dt-bindings/zmk/matrix_transform.h>
+#include "trackball_test_split-layouts.dtsi"
+
+/ {
+    chosen {
+        zmk,kscan = &kscan0;
+        zmk,physical-layout = &trackball_test_split_physical_layout;
+    };
+
+    // キー：ダイオードなしの 2×2 マトリクス。列に電圧を出し、行で読む
+    kscan0: kscan0 {
+        compatible = "zmk,kscan-gpio-matrix";
+        diode-direction = "col2row";
+        wakeup-source;
+
+        col-gpios
+            = <&gpio0 6 GPIO_ACTIVE_HIGH>    // 列0：D11 = P0.06
+            , <&gpio0 8 GPIO_ACTIVE_HIGH>    // 列1：D12 = P0.08
+            ;
+
+        row-gpios
+            = <&gpio1 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // 行0：D5 = P1.08
+            , <&gpio0 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // 行1：D6 = P0.07
+            ;
+    };
+
+    // 全体で 2行×4列。左が列0〜1、右が列2〜3（右の .overlay で col-offset = 2）
+    default_transform: keymap_transform0 {
+        compatible = "zmk,matrix-transform";
+        columns = <4>;
+        rows = <2>;
+        map = <
+        //  左SW1   左SW2   右SW1   右SW2
+            RC(0,0) RC(0,1) RC(0,2) RC(0,3)
+        //  左SW3   左SW4   右SW3   右SW4
+            RC(1,0) RC(1,1) RC(1,2) RC(1,3)
+        >;
+    };
+};

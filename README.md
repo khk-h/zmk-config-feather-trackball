@@ -7,7 +7,8 @@
 | 場所 | 内容 |
 |---|---|
 | `boards/arm/feather_nrf52840_zmk/` | Feather nRF52840 Express のボード定義（ZMK v0.3.0 の nice!nano の定義が元。Feather に入っている UF2 ブートローダの配置に合わせた） |
-| `boards/shields/trackball_test/` | 机上試験用のシールド（ピンの割り当て・キーマップ） |
+| `boards/shields/trackball_test/` | 机上試験用のシールド（1台。ピンの割り当て・キーマップ） |
+| `boards/shields/trackball_test_split/` | 2台（左右の分割）の机上試験用のシールド。右がセントラル（パソコンとつながる、トラックボール付き）、左がペリフェラル（キーだけ） |
 | `config/west.yml` | ZMK v0.3.0 と PMW3610 ドライバ（badjeff/zmk-pmw3610-driver の zmk-0.3 ブランチ）の版 |
 | `build.yaml` | GitHub Actions でビルドする組み合わせ |
 
@@ -28,6 +29,17 @@
 1. GitHub の Actions で最新のビルドを開き、Artifacts の `firmware` をダウンロードして展開する
 2. Feather を USB でつなぎ、リセットボタンを素早く2回押す（`FTHR840BOOT` ドライブが出る）
 3. `trackball_test-feather_nrf52840_zmk-zmk.uf2` をそのドライブにドラッグする
+
+## 2台（左右の分割）の試験
+
+- 右（セントラル）：上の配線のまま（キー4個＋PMW3610）。`trackball_test_split_right-feather_nrf52840_zmk-zmk.uf2`
+- 左（ペリフェラル）：キー4個だけ。キーの配線は右と同じピン（行 5・6、列 11・12）。`trackball_test_split_left-feather_nrf52840_zmk-zmk.uf2`
+- キーマップ：右は1台のときと同じ。左は SW1 B、SW2 C、SW3 D、SW4 E（どちらの手の入力か分かるように）
+- 書き込みの順番：
+  1. 左右とも `settings_reset-feather_nrf52840_zmk-zmk.uf2` を書き込む（前のペアリング情報を消す）
+  2. パソコンの Bluetooth の一覧から、前の「TB Test」を削除する
+  3. 左に `…split_left…`、右に `…split_right…` を書き込む
+  4. 左右の電源を入れると、左と右が自動でつながる。パソコンからは「TB Split Test」（右）とペアリングする
 
 ## ライセンス
 

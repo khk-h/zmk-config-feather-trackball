@@ -1,0 +1,6 @@
+# No whitespace after the comma or in your keyboard name!
+config SHIELD_TRACKBALL_TEST_SPLIT_LEFT
+    def_bool $(shields_list_contains,trackball_test_split_left)
+
+config SHIELD_TRACKBALL_TEST_SPLIT_RIGHT
+    def_bool $(shields_list_contains,trackball_test_split_right)

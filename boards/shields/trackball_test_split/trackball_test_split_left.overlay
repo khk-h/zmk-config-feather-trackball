@@ -1,0 +1,2 @@
+// 左（ペリフェラル）：キーだけ
+#include "trackball_test_split.dtsi"

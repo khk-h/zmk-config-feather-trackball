@@ -1,0 +1,57 @@
+// 右（セントラル）：キー＋トラックボール。配線は 1台用の trackball_test と同じ
+
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <input/processors.dtsi>
+#include "trackball_test_split.dtsi"
+
+&default_transform {
+    col-offset = <2>;
+};
+
+/ {
+    trackball_listener {
+        compatible = "zmk,input-listener";
+        device = <&trackball>;
+    };
+};
+
+// PMW3610：3線式 SPI（SDIO 1本で送受信するので、MOSI と MISO に同じピンを割り当てる）
+&pinctrl {
+    spi0_default: spi0_default {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 14)>,    // SCLK：SCK = P0.14
+                    <NRF_PSEL(SPIM_MOSI, 0, 13)>,   // SDIO：MO = P0.13
+                    <NRF_PSEL(SPIM_MISO, 0, 13)>;   // SDIO：MO = P0.13
+        };
+    };
+
+    spi0_sleep: spi0_sleep {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 14)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 13)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 13)>;
+            low-power-enable;
+        };
+    };
+};
+
+&spi0 {
+    status = "okay";
+    compatible = "nordic,nrf-spim";
+    pinctrl-0 = <&spi0_default>;
+    pinctrl-1 = <&spi0_sleep>;
+    pinctrl-names = "default", "sleep";
+    cs-gpios = <&gpio0 27 GPIO_ACTIVE_LOW>;    // nCS：D10 = P0.27
+
+    trackball: trackball@0 {
+        status = "okay";
+        compatible = "pixart,pmw3610";
+        reg = <0>;
+        spi-max-frequency = <2000000>;
+        irq-gpios = <&gpio0 26 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;   // MOTION：D9 = P0.26
+        cpi = <600>;
+        evt-type = <INPUT_EV_REL>;
+        x-input-code = <INPUT_REL_X>;
+        y-input-code = <INPUT_REL_Y>;
+    };
+};

@@ -1,0 +1,11 @@
+file_format: "1"
+id: trackball_test_split
+name: Trackball Split Test
+type: shield
+url: https://github.com/khk-h/zmk-config-feather-trackball
+features:
+  - keys
+  - pointer
+siblings:
+  - trackball_test_split_left
+  - trackball_test_split_right
