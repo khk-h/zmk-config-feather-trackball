@@ -1,0 +1,3 @@
+# No whitespace after the comma or in your keyboard name!
+config SHIELD_TRACKBALL_TEST_PAW3222
+    def_bool $(shields_list_contains,trackball_test_paw3222)

@@ -1,0 +1,23 @@
+if SHIELD_TRACKBALL_TEST_PAW3222
+
+    # Bluetooth で見える名前（16文字まで）
+    config ZMK_KEYBOARD_NAME
+        default "TB PAW Test"
+
+    config INPUT
+        bool
+        default y
+
+    config PAW3222
+        bool
+        default y
+
+    config SPI
+        bool
+        default y
+
+    config ZMK_POINTING
+        bool
+        default y
+
+endif

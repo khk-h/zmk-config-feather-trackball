@@ -4,6 +4,9 @@ include:
   # 1台だけの机上試験
   - board: feather_nrf52840_zmk
     shield: trackball_test
+  # 1台だけの机上試験（PAW3222。PMW3610 からの切り替えの検討用）
+  - board: feather_nrf52840_zmk
+    shield: trackball_test_paw3222
   # 2台（左右の分割）の机上試験。右がセントラル（パソコンとつながる、トラックボール付き）
   - board: feather_nrf52840_zmk
     shield: trackball_test_split_left

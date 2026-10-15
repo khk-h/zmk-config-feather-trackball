@@ -1,0 +1,89 @@
+/*
+ * 机上試験用：Feather nRF52840 Express ＋ タクトスイッチ4個（2行×2列）＋ PAW3222 モジュール（のぎけす屋、sekigon-gonnoc/small-mouse-sensor-module）
+ * キーとセンサーの配線は trackball_test（PMW3610）と同じピン。モジュールのピン：1＝3.3V、2＝CS、3＝MOTION、4＝SDIO、5＝SCLK、6＝GND
+ */
+
+#include <dt-bindings/zmk/matrix_transform.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <input/processors.dtsi>
+#include "trackball_test_paw3222-layouts.dtsi"
+
+/ {
+    chosen {
+        zmk,kscan = &kscan0;
+        zmk,physical-layout = &trackball_test_paw3222_physical_layout;
+    };
+
+    // キー：ダイオードなしの 2×2 マトリクス。列に電圧を出し、行で読む
+    kscan0: kscan0 {
+        compatible = "zmk,kscan-gpio-matrix";
+        diode-direction = "col2row";
+        wakeup-source;
+
+        col-gpios
+            = <&gpio0 6 GPIO_ACTIVE_HIGH>    // 列0：D11 = P0.06
+            , <&gpio0 8 GPIO_ACTIVE_HIGH>    // 列1：D12 = P0.08
+            ;
+
+        row-gpios
+            = <&gpio1 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // 行0：D5 = P1.08
+            , <&gpio0 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // 行1：D6 = P0.07
+            ;
+    };
+
+    default_transform: keymap_transform0 {
+        compatible = "zmk,matrix-transform";
+        columns = <2>;
+        rows = <2>;
+        map = <
+        //   SW1     SW2
+            RC(0,0) RC(0,1)
+        //   SW3     SW4
+            RC(1,0) RC(1,1)
+        >;
+    };
+
+    trackball_listener {
+        compatible = "zmk,input-listener";
+        device = <&trackball>;
+    };
+};
+
+// PAW3222：3線式 SPI（SDIO 1本で送受信するので、MOSI と MISO に同じピンを割り当てる。torabo-tsuki-lp と同じ書き方）
+&pinctrl {
+    spi0_default: spi0_default {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 14)>,    // SCLK：SCK = P0.14
+                    <NRF_PSEL(SPIM_MOSI, 0, 13)>,   // SDIO：MO = P0.13
+                    <NRF_PSEL(SPIM_MISO, 0, 13)>;   // SDIO：MO = P0.13
+        };
+    };
+
+    spi0_sleep: spi0_sleep {
+        group1 {
+            psels = <NRF_PSEL(SPIM_SCK, 0, 14)>,
+                    <NRF_PSEL(SPIM_MOSI, 0, 13)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 13)>;
+            low-power-enable;
+        };
+    };
+};
+
+&spi0 {
+    status = "okay";
+    compatible = "nordic,nrf-spim";
+    pinctrl-0 = <&spi0_default>;
+    pinctrl-1 = <&spi0_sleep>;
+    pinctrl-names = "default", "sleep";
+    cs-gpios = <&gpio0 27 GPIO_ACTIVE_LOW>;    // CS：D10 = P0.27
+
+    // power-gpios（センサーの電源を切るピン）は使わない。モジュールの 3.3V は Feather の 3V に直結
+    trackball: trackball@0 {
+        status = "okay";
+        compatible = "pixart,paw3222";
+        reg = <0>;
+        spi-max-frequency = <2000000>;
+        irq-gpios = <&gpio0 26 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;   // MOTION：D9 = P0.26
+        res-cpi = <608>;    // 608〜4826、38 刻み。PMW3610 の試験の 600 に近い値
+    };
+};

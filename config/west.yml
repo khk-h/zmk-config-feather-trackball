@@ -4,6 +4,8 @@ manifest:
       url-base: https://github.com/zmkfirmware
     - name: badjeff
       url-base: https://github.com/badjeff
+    - name: sekigon-gonnoc
+      url-base: https://github.com/sekigon-gonnoc
   projects:
     - name: zmk
       remote: zmkfirmware
@@ -13,5 +15,9 @@ manifest:
     - name: zmk-pmw3610-driver
       remote: badjeff
       revision: 5c5af40de4d8cdf55dc63c4c5907af1e52da6a95
+    # PAW3222 のドライバ（切り替えの検討用）。torabo-tsuki ブランチは main に nRF52 向けの省電力の処理を足したもの。版を固定する
+    - name: zmk-driver-paw3222
+      remote: sekigon-gonnoc
+      revision: 0e1835c57f88d215ce401b6d0901f361629621fc
   self:
     path: config
