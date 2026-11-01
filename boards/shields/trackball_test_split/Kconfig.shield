@@ -4,3 +4,6 @@ config SHIELD_TRACKBALL_TEST_SPLIT_LEFT
 
 config SHIELD_TRACKBALL_TEST_SPLIT_RIGHT
     def_bool $(shields_list_contains,trackball_test_split_right)
+
+config SHIELD_TRACKBALL_TEST_SPLIT_RIGHT_PAW3222
+    def_bool $(shields_list_contains,trackball_test_split_right_paw3222)

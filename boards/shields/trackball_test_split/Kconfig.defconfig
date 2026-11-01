@@ -23,7 +23,31 @@ if SHIELD_TRACKBALL_TEST_SPLIT_RIGHT
 
 endif
 
-if SHIELD_TRACKBALL_TEST_SPLIT_LEFT || SHIELD_TRACKBALL_TEST_SPLIT_RIGHT
+# 右を PAW3222 にした版（左は trackball_test_split_left のまま）
+if SHIELD_TRACKBALL_TEST_SPLIT_RIGHT_PAW3222
+
+    # Bluetooth で見える名前（16文字まで）
+    config ZMK_KEYBOARD_NAME
+        default "TB Split PAW"
+
+    config ZMK_SPLIT_ROLE_CENTRAL
+        default y
+
+    config INPUT
+        bool
+        default y
+
+    config PAW3222
+        bool
+        default y
+
+    config SPI
+        bool
+        default y
+
+endif
+
+if SHIELD_TRACKBALL_TEST_SPLIT_LEFT || SHIELD_TRACKBALL_TEST_SPLIT_RIGHT || SHIELD_TRACKBALL_TEST_SPLIT_RIGHT_PAW3222
 
     config ZMK_SPLIT
         default y

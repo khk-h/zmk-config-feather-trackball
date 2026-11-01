@@ -44,6 +44,12 @@ PAW3222 モジュール（のぎけす屋）を使うときは、モジュール
   3. 左に `…split_left…`、右に `…split_right…` を書き込む
   4. 左右の電源を入れると、左と右が自動でつながる。パソコンからは「TB Split Test」（右）とペアリングする
 
+### 右を PAW3222 にした版
+
+- 右（セントラル）：キー4個＋PAW3222 のモジュール。配線は1台用の `trackball_test_paw3222` と同じ。`trackball_test_split_right_paw3222-feather_nrf52840_zmk-zmk.uf2`
+- 左（ペリフェラル）：上と同じ `…split_left…`
+- キーマップは上と同じ。パソコンからは「TB Split PAW」（右）とペアリングする。書き込みの順番も上と同じ（パソコンの一覧からは、前の「TB PAW Test」などを削除する）
+
 ## ライセンス
 
 MIT（`LICENSE`）。[snize/zmk-seiboku-example](https://github.com/snize/zmk-seiboku-example)（MIT）を元にしている。

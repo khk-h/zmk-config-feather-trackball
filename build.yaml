@@ -12,6 +12,9 @@ include:
     shield: trackball_test_split_left
   - board: feather_nrf52840_zmk
     shield: trackball_test_split_right
+  # 2台の机上試験で、右を PAW3222 にした版（左は上の trackball_test_split_left を使う）
+  - board: feather_nrf52840_zmk
+    shield: trackball_test_split_right_paw3222
   # 保存されたペアリング情報などを消す（左右の組み合わせを変えたとき・つながらないときに書き込む）
   - board: feather_nrf52840_zmk
     shield: settings_reset
